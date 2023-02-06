@@ -1,8 +1,9 @@
-const staticCacheName = 'static-cache-v15';
-const dynamicCacheName = 'dynamic-cache-v15';
+const PRECACHE = 'precache-v1';
+const RUNTIME = 'runtime';
 
-const staticAssets = [
-    './',
+// A list of local resources we always want to be cached.
+const PRECACHE_URLS = [
+  './',
     './index.html',
     './images/icons/icon-128x128.png',
     './images/icons/icon-192x192.png',
@@ -21,61 +22,50 @@ const staticAssets = [
     './images/no-image.jpg'
 ];
 
-self.addEventListener('install', async event => {
-    const cache = await caches.open(staticCacheName);
-    await cache.addAll(staticAssets);
-    console.log('Service worker has been installed');
+// The install handler takes care of precaching the resources we always need.
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(PRECACHE)
+      .then(cache => cache.addAll(PRECACHE_URLS))
+      .then(self.skipWaiting())
+  );
 });
 
-self.addEventListener('activate', async event => {
-    const cachesKeys = await caches.keys();
-    const checkKeys = cachesKeys.map(async key => {
-        if (![staticCacheName, dynamicCacheName].includes(key)) {
-            await caches.delete(key);
-        }
-    });
-    await Promise.all(checkKeys);
-    console.log('Service worker has been activated');
+// The activate handler takes care of cleaning up old caches.
+self.addEventListener('activate', event => {
+  const currentCaches = [PRECACHE, RUNTIME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return cacheNames.filter(cacheName => !currentCaches.includes(cacheName));
+    }).then(cachesToDelete => {
+      return Promise.all(cachesToDelete.map(cacheToDelete => {
+        return caches.delete(cacheToDelete);
+      }));
+    }).then(() => self.clients.claim())
+  );
 });
 
+// The fetch handler serves responses for same-origin resources from a cache.
+// If no response is found, it populates the runtime cache with the response
+// from the network before returning it to the page.
 self.addEventListener('fetch', event => {
-    console.log(`Trying to fetch ${event.request.url}`);
-    event.respondWith(checkCache(event.request));
-});
-
-async function checkCache(req) {
-    const cachedResponse = await caches.match(req);
-    return cachedResponse || checkOnline(req);
-}
-
-async function checkOnline(req) {
-    const cache = await caches.open(dynamicCacheName);
-    try {
-        const res = await fetch(req);
-        await cache.put(req, res.clone());
-        return res;
-    } catch (error) {
-        const cachedRes = await cache.match(req);
-        if (cachedRes) {
-            return cachedRes;
-        } else if (req.url.indexOf('.html') !== -1) {
-            return caches.match('./offline.html');
-        } else {
-            return caches.match('./images/no-image.jpg');
+  // Skip cross-origin requests, like those for Google Analytics.
+  if (event.request.url.startsWith(self.location.origin)) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
-    }
-}
 
-
-// Detects if device is on iOS 
-const isIos = () => {
-  const userAgent = window.navigator.userAgent.toLowerCase();
-  return /iphone|ipad|ipod/.test( userAgent );
-}
-// Detects if device is in standalone mode
-const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-
-// Checks if should display install popup notification:
-if (isIos() && !isInStandaloneMode()) {
-  this.setState({ showInstallMessage: true });
-} 
+        return caches.open(RUNTIME).then(cache => {
+          return fetch(event.request).then(response => {
+            // Put a copy of the response in the runtime cache.
+            return cache.put(event.request, response.clone()).then(() => {
+              return response;
+            });
+          });
+        });
+      })
+    );
+  }
+}); 
