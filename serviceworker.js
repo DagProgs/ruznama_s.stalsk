@@ -1,5 +1,8 @@
-const CACHE_NAME = "version-3";
-const assetsToCache = [
+
+const staticCacheName = 'static-cache-v0';
+const dynamicCacheName = 'dynamic-cache-v0';
+
+const staticAssets = [
     './',
     './index.html',
 	'./css/font-awesome.min.css',
@@ -12,10 +15,7 @@ const assetsToCache = [
 	'./js/script.js',
 	'./js/wwb18.min.js',
 	'./db/ruznama_kasumkent.db',
-];
-
-const assetsToRequest = [
-    './index.html',
+	'./index.html',
     './manifest.json',
     './css/font-awesome.min.css',
 	'./css/index.css',
@@ -30,119 +30,47 @@ const assetsToRequest = [
     './serviceworker.js'
 ];
 
-const self = this;
-
-// Install SW
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('Opened cache');
-
-                return cache.addAll(assetsToCache);
-            })
-    )
+self.addEventListener('install', async event => {
+    const cache = await caches.open(staticCacheName);
+    await cache.addAll(staticAssets);
+    console.log('Service worker has been installed');
 });
 
-// Listen for requests
-// self.addEventListener('fetch', (event) => {
-//     event.respondWith(
-//         caches.match(event.request)
-//             .then(() => {
-//                 return fetch(event.request)
-//                     .catch(() => caches.match('index.html'))
-//             })
-//     )
-// });
-
-// cache first, if miss fetch
-
-// self.addEventListener('fetch', function (event) {
-//     event.respondWith(
-//         caches.open(CACHE_NAME).then(function (cache) {
-//             return cache.match(event.request).then(function (response) {
-//                 return (
-//                     response ||
-//                     fetch(event.request).then(function (response) {
-//                         cache.put(event.request, response.clone());
-//                         return response;
-//                     })
-//                 );
-//             });
-//         }),
-//     );
-// });
-
-// stale while revitalate
-self.addEventListener('fetch', function (event) {
-    event.respondWith(
-        caches.open(CACHE_NAME).then(function (cache) {
-            return cache.match(event.request).then(function (response) {
-                var fetchPromise = fetch(event.request).then(function (networkResponse) {
-                    cache.put(event.request, networkResponse.clone());
-                    return networkResponse;
-                });
-                return response || fetchPromise;
-            });
-        }),
-    );
+self.addEventListener('activate', async event => {
+    const cachesKeys = await caches.keys();
+    const checkKeys = cachesKeys.map(async key => {
+        if (![staticCacheName, dynamicCacheName].includes(key)) {
+            await caches.delete(key);
+        }
+    });
+    await Promise.all(checkKeys);
+    console.log('Service worker has been activated');
 });
 
-// // network first, if network put updated content in cache
-// self.addEventListener('fetch', function (event) {
-//     event.respondWith(
-//         caches.open(CACHE_NAME).then(function (cache) {
-//             return cache.match(event.request).then(function (response) {
-//                 var fetchPromise = fetch(event.request).then(function (networkResponse) {
-//                     cache.put(event.request, networkResponse.clone());
-//                     return networkResponse;
-//                 });
-//                 return fetchPromise || response;
-//             });
-//         }),
-//     );
-// });
-
-// // specific assets to fetch
-// // network first, if network put updated content in cache
-// self.addEventListener('fetch', function (event) {
-//     event.respondWith(
-//         caches.open(CACHE_NAME).then(function (cache) {
-//             return cache.match(event.request).then(function (response) {
-//                 var requestedAsset = event.request.url.split(event.request.referrer).pop();
-//                 if (!requestedAsset) {
-//                     requestedAsset = '/';
-//                 } else if (requestedAsset !== '/') {
-//                     requestedAsset = "/" + requestedAsset;
-//                 }
-//                 if (assetsToRequest.includes(requestedAsset)) {
-//                     var fetchPromise = fetch(event.request).then(function (networkResponse) {
-//                         cache.put(event.request, networkResponse.clone());
-//                         return networkResponse;
-//                     });
-//                     return fetchPromise || response;
-//                 } else {
-//                     return response;
-//                 }
-
-//             });
-//         }),
-//     );
-// });
-
-// Activate the SW
-self.addEventListener('activate', (event) => {
-    const cacheWhitelist = [];
-    cacheWhitelist.push(CACHE_NAME);
-
-    event.waitUntil(
-        caches.keys().then((cacheNames) => Promise.all(
-            cacheNames.map((cacheName) => {
-                if (!cacheWhitelist.includes(cacheName)) {
-                    return caches.delete(cacheName);
-                }
-            })
-        ))
-
-    )
+self.addEventListener('fetch', event => {
+    console.log(`Trying to fetch ${event.request.url}`);
+    event.respondWith(checkCache(event.request));
 });
+
+async function checkCache(req) {
+    const cachedResponse = await caches.match(req);
+    return cachedResponse || checkOnline(req);
+}
+
+async function checkOnline(req) {
+    const cache = await caches.open(dynamicCacheName);
+    try {
+        const res = await fetch(req);
+        await cache.put(req, res.clone());
+        return res;
+    } catch (error) {
+        const cachedRes = await cache.match(req);
+        if (cachedRes) {
+            return cachedRes;
+        } else if (req.url.indexOf('.html') !== -1) {
+            return caches.match('./offline.html');
+        } else {
+            return caches.match('./images/no-image.jpg');
+        }
+    }
+}
