@@ -1,33 +1,33 @@
-const CACHE_NAME = "version-2";
+const CACHE_NAME = "version-3";
 const assetsToCache = [
-    '/',
-    '/index.html',
-	'/css/font-awesome.min.css',
-	'/css/index.css',
-	'/css/Untitled1.css',
-	'/js/dayruznama.js',
-	'/js/jquery.hijri.date.min.js',
-	'/js/jquery.min.js',
-	'/js/jquery-3.6.0.min.js',
-	'/js/script.js',
-	'/js/wwb18.min.js',
-	'/db/ruznama_kasumkent.db',
+    './',
+    './index.html',
+	'./css/font-awesome.min.css',
+	'./css/index.css',
+	'./css/Untitled1.css',
+	'./js/dayruznama.js',
+	'./js/jquery.hijri.date.min.js',
+	'./js/jquery.min.js',
+	'./js/jquery-3.6.0.min.js',
+	'./js/script.js',
+	'./js/wwb18.min.js',
+	'./db/ruznama_kasumkent.db',
 ];
 
 const assetsToRequest = [
-    '/index.html',
-    '/manifest.json',
-    '/css/font-awesome.min.css',
-	'/css/index.css',
-	'/css/Untitled1.css',
-	'/js/dayruznama.js',
-	'/js/jquery.hijri.date.min.js',
-	'/js/jquery.min.js',
-	'/js/jquery-3.6.0.min.js',
-	'/js/script.js',
-	'/js/wwb18.min.js',
-	'/db/ruznama_kasumkent.db',
-    '/serviceworker.js'
+    './index.html',
+    './manifest.json',
+    './css/font-awesome.min.css',
+	'./css/index.css',
+	'./css/Untitled1.css',
+	'./js/dayruznama.js',
+	'./js/jquery.hijri.date.min.js',
+	'./js/jquery.min.js',
+	'./js/jquery-3.6.0.min.js',
+	'./js/script.js',
+	'./js/wwb18.min.js',
+	'./db/ruznama_kasumkent.db',
+    './serviceworker.js'
 ];
 
 const self = this;
