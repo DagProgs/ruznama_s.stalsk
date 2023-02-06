@@ -1616,14 +1616,19 @@ tr[(date || 31) - 0].classList.add('myclosed');
 </div>
 </div>
 <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("serviceworker.js")
-            .then((reg) => console.log("Success: ", reg.scope))
-            .catch((err) => console.log("Failure: ", err));
-        });
-      }
+      window.addEventListener('load', () => {
+
+    if ('serviceWorker' in navigator){
+
+        navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+                console.log('Service worker successfully registered', registration);
+            })
+            .catch(error => {
+                console.log('Service worker registration failed', error);
+            });
+    }
+});
     </script>
 
 <div id="preloader"></div>
