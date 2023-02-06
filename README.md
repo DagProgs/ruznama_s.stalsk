@@ -1,0 +1,1 @@
+# ruznama_s.stalsk
