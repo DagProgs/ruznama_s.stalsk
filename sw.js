@@ -1,5 +1,5 @@
-const staticCacheName = 'static-stalsk-v10'
-const dynamicCacheName = 'dynamic-stalsk-v10'
+const staticCacheName = 'static-stalsk-v11'
+const dynamicCacheName = 'dynamic-stalsk-v11'
 
 const staticAssets = [
     './',
@@ -21,11 +21,34 @@ const staticAssets = [
     './images/no-image.jpg'
 ];
 
-self.addEventListener('install', async event => {
-    const cache = await caches.open(staticCacheName);
-    await cache.addAll(staticAssets);
-    console.log('Service worker has been installed');
+
+
+
+self.addEventListener('install', event => {
+    console.log('install');
+    event.waitUntil(
+        Promise.all([
+            // caches.open('one')
+            caches.open(staticCacheName)
+                .then(cache => cache.addAll(staticAssets)) //Может быть возвращаемое значение, я не знаю
+                .then(ok => console.log('add all ok'), e => console.log(e))
+            ,
+            //  Очистить старые версии
+            caches.keys().then(function (cacheList) {
+                return Promise.all(
+                    cacheList.map(function (cacheName) {
+                        if (cacheName !== 'two') {
+                            console.log('Очистить',cacheName);
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+        ])
+    );
 });
+
+
 
 self.addEventListener('activate', event => {
     console.log('two now ready to handle fetches!');
@@ -35,7 +58,7 @@ self.addEventListener('activate', event => {
             caches.keys().then(function (cacheList) {
                 return Promise.all(
                     cacheList.map(function (cacheName) {
-                        if (cacheName !== 'dynamicCacheName') {
+                        if (cacheName !== 'staticCacheName', 'dynamicCacheName') {
                             console.log('Очистить',cacheName);
                             return caches.delete(cacheName);
                         }
