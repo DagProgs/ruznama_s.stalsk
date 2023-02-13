@@ -1,5 +1,5 @@
-const staticCacheName = 'static-stalsk-v1'
-const dynamicCacheName = 'dynamic-stalsk-v2'
+const staticCacheName = 'static-stalsk-v3'
+const dynamicCacheName = 'dynamic-stalsk-v3'
 
 const staticAssets = [
     './',
@@ -31,7 +31,7 @@ self.addEventListener('activate', async event => {
     const cachesKeys = await caches.keys();
     const checkKeys = cachesKeys.map(async key => {
         if (![staticCacheName, dynamicCacheName].includes(key)) {
-            await caches.delete(key);
+            return await caches.delete(cache);
         }
     });
     await Promise.all(checkKeys);
