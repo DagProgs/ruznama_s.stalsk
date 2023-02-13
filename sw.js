@@ -1,5 +1,5 @@
-const staticCacheName = 'static-stalsk-v7'
-const dynamicCacheName = 'dynamic-stalsk-v7'
+const staticCacheName = 'static-stalsk-v10'
+const dynamicCacheName = 'dynamic-stalsk-v10'
 
 const staticAssets = [
     './',
@@ -27,15 +27,23 @@ self.addEventListener('install', async event => {
     console.log('Service worker has been installed');
 });
 
-self.addEventListener('activate', async event => {
-    const cachesKeys = await caches.keys();
-    const checkKeys = cachesKeys.map(async key => {
-        if (!['staticCacheName', 'dynamicCacheName'].includes(key)) {
-            await caches.delete(key);
-        }
-    });
-    await Promise.all(checkKeys);
-    console.log('Service worker has been activated');
+self.addEventListener('activate', event => {
+    console.log('two now ready to handle fetches!');
+    event.waitUntil(
+        Promise.all([
+            // Очищаем старую версию
+            caches.keys().then(function (cacheList) {
+                return Promise.all(
+                    cacheList.map(function (cacheName) {
+                        if (cacheName !== 'dynamicCacheName') {
+                            console.log('Очистить',cacheName);
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+        ])
+    );
 });
 
 self.addEventListener('fetch', event => {
