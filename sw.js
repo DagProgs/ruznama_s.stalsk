@@ -1,8 +1,6 @@
-const staticCacheName = 'static-stalsk-v112'
-const dynamicCacheName = 'dynamic-stalsk-v112'
-
-const staticAssets = [
-    './',
+var cacheName = 'phaser-v1';
+var filesToCache = [
+  './',
     './index.html',
     './images/icons/icon-128x128.png',
     './images/icons/icon-192x192.png',
@@ -20,50 +18,47 @@ const staticAssets = [
 	'./js/wwb18.min.js',
     './images/no-image.jpg'
 ];
-
-self.addEventListener('install', async event => {
-    const cache = await caches.open(staticCacheName);
-    await cache.addAll(staticAssets);
-    console.log('Service worker has been installed');
+ 
+self.addEventListener('install', function(event) {
+  console.log('установка sw');
+  event.waitUntil(
+    caches.open(cacheName).then(function(cache) {
+      console.log('sw кеширует файлы');
+      return cache.addAll(filesToCache);
+    }).catch(function(err) {
+      console.log(err);
+    })
+  );
 });
 
-self.addEventListener('activate', async event => {
-    const cachesKeys = await caches.keys();
-    const checkKeys = cachesKeys.map(async key => {
-        if (![staticCacheName, dynamicCacheName].includes(key)) {
-            await caches.delete(key);
+
+self.addEventListener('activate', function(event) {
+
+  console.log('событие activate sw');
+
+  event.waitUntil(
+
+    caches.keys().then(function(keyList) {
+
+      return Promise.all(keyList.map(function(key) {
+
+        if (key !== cacheName) {
+
+          console.log('удаление старого кеша sw', key);
+
+          return caches.delete(key);
+
         }
-    });
-    await Promise.all(checkKeys);
-    console.log('Service worker has been activated');
-});
 
-self.addEventListener('fetch', event => {
-    console.log(`Trying to fetch ${event.request.url}`);
-    event.respondWith(checkCache(event.request));
-});
+      }));
 
-async function checkCache(req) {
-    const cachedResponse = await caches.match(req);
-    return cachedResponse || checkOnline(req);
-}
+    })
 
-async function checkOnline(req) {
-    const cache = await caches.open(dynamicCacheName);
-    try {
-        const res = await fetch(req);
-        await cache.put(req, res.clone());
-        return res;
-    } catch (error) {
-        const cachedRes = await cache.match(req);
-        if (cachedRes) {
-            return cachedRes;
-        } else if (req.url.indexOf('.html') !== -1) {
-            return caches.match('./offline.html');
-        } else {
-            return caches.match('./images/no-image.jpg');
-        }
-    }
-}
+  );
+
+})
+
+
+
 
 
