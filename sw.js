@@ -1,8 +1,24 @@
-const staticCacheName = 'static-cache-v36';
-const dynamicCacheName = 'dynamic-cache-v36';
+const staticCacheName = 'static-stalak-v0';
+const dynamicCacheName = 'dynamic-stalak-v0';
 
 const staticAssets = [
-    
+    './',
+    './index.html',
+    './images/icons/icon-128x128.png',
+    './images/icons/icon-192x192.png',
+    './offline.html',
+	'./css/font-awesome.min.css',
+	'./css/index.css',
+	'./css/Untitled1.css',
+    './js/app.js',
+    './js/main.js',
+	'./js/jquery.hijri.date.min',
+	'./js/jquery-3.6.0.min.js',
+	'./js/jquery.min.js',
+	'./js/dayruznama.js',
+	'./js/script.js.js',
+	'./js/wwb18.min.js',
+    './images/no-image.jpg'
 ];
 
 self.addEventListener('install', async event => {
