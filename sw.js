@@ -1,23 +1,23 @@
-const staticCacheName = "static-stalsk-v25";
-const dynamicCacheName = "dynamic-stalsk-v26";
+const staticCacheName = "static-stalsk-v26";
+const dynamicCacheName = "dynamic-stalsk-v27";
 const assets = [
   "/",
   "/index.html",
-  '/images/icons/icon-128x128.png',
-    '/images/icons/icon-192x192.png',
-    '/offline.html',
-	'/css/font-awesome.min.css',
-	'/css/index.css',
-	'/css/Untitled1.css',
-    '/js/app.js',
-    '/js/main.js',
-	'/js/jquery.hijri.date.min',
-	'/js/jquery-3.6.0.min.js',
-	'/js/jquery.min.js',
-	'/js/dayruznama.js',
-	'/js/script.js.js',
-	'/js/wwb18.min.js',
-    '/images/no-image.jpg'
+  "/images/icons/icon-128x128.png",
+    "/images/icons/icon-192x192.png",
+    "/offline.html",
+	"/css/font-awesome.min.css",
+	"/css/index.css",
+	"/css/Untitled1.css",
+    "/js/app.js",
+    "/js/main.js",
+	"/js/jquery.hijri.date.min",
+	"/js/jquery-3.6.0.min.js",
+	"/js/jquery.min.js",
+	"/js/dayruznama.js",
+	"/js/script.js.js",
+	"/js/wwb18.min.js",
+    "/images/no-image.jpg"
 ];
 
 //Cache size limit function
