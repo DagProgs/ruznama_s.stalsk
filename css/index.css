@@ -415,10 +415,10 @@ body
 
 .h_localicontext {
     display: flex;
-    align-items: center;
+    width: 100vw;
     position: relative;
-    top: 23px;
-    left: 158px;
+    top: 25px;
+    left: 35px;
 }
 
 .h_loc {
