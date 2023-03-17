@@ -36,7 +36,6 @@
 <link href="css/font-awesome.min.css" rel="stylesheet">
 <link href="css/Untitled1.css" rel="stylesheet">
 <link href="css/index.css" rel="stylesheet">
-<script src="https://dagprogs.github.io/ruznamaKurah/js/data-ru-ar.clock.js"></script>
 <script src="js/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="js/jquery.min.js"></script>
@@ -199,7 +198,18 @@ $(window).on('load', function()
 
         </header>
     </div>
-    
+    <script>
+        $('.my-date').hijriDate({
+            showGregDate: true,
+            showWeekDay: true,
+            separator: '&nbsp&nbsp|&nbsp&nbsp',
+            weekDayLang: 'ru',
+            gregLang: 'ru',
+            hijriLang: 'ru',
+            correction: +0
+        });
+
+    </script>
     <script>
         function currentTime() {
             var date = new Date();
