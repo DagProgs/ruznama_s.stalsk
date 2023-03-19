@@ -1,5 +1,5 @@
-const staticCacheName = "static-stalsk-v101";
-const dynamicCacheName = "dynamic-stalsk-v102";
+const staticCacheName = "static-stalsk-v102";
+const dynamicCacheName = "dynamic-stalsk-v103";
 const assets = [
   '/',
   '/index.html',
