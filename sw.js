@@ -1,8 +1,9 @@
-const staticCacheName = 's-stalsk-v2';
-const dynamicCacheName = 'd-stalsk-v3';
+const staticCacheName = 's-stalsk-v3';
+const dynamicCacheName = 'd-stalsk-v4';
 
 const staticAssets = [
-  './index.html'
+	'./',
+	'./index.html'
 ]
 
 self.addEventListener('install', async event => {
