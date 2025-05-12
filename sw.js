@@ -1,12 +1,12 @@
-const staticCacheName = 's-stalsk-v10';
-const dynamicCacheName = 'd-stalsk-v10';
+const staticCacheName = 's-stalsk-v11';
+const dynamicCacheName = 'd-stalsk-v11';
 
 const staticAssets = [
-	'./',
-	'./index.html',
-	'/index.html',
-	'index.html'
-]
+    './',
+    './index.html',
+    '/index.html',
+    'index.html'
+];
 
 self.addEventListener('install', async event => {
     const cache = await caches.open(staticCacheName);
@@ -19,6 +19,7 @@ self.addEventListener('activate', async event => {
     const checkKeys = cachesKeys.map(async key => {
         if (![staticCacheName, dynamicCacheName].includes(key)) {
             await caches.delete(key);
+            console.log(`Deleted cache: ${key}`);
         }
     });
     await Promise.all(checkKeys);
