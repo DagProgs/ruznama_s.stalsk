@@ -1,8 +1,8 @@
 {
   "name": "Сулейман-Стальский р-он",
   "short_name": "Рузнама",
-  "theme_color": "#007558",
-  "background_color": "#007558",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": "./index.html",

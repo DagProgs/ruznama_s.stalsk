@@ -2,7 +2,8 @@ const staticCacheName = 's-stalsk-v6';
 const dynamicCacheName = 'd-stalsk-v7';
 
 const staticAssets = [
-    './index.html'
+    './index.html',
+	'./manifest.json'
 ];
 
 self.addEventListener('install', async event => {
