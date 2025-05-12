@@ -2,10 +2,7 @@ const staticCacheName = 's-stalsk-v6';
 const dynamicCacheName = 'd-stalsk-v7';
 
 const staticAssets = [
-    './',
-    './index.html',
-    '/index.html',
-    'index.html'
+    './index.html'
 ];
 
 self.addEventListener('install', async event => {
