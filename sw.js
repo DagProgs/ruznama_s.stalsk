@@ -1,5 +1,5 @@
-const staticCacheName = 's-stalsk-v11';
-const dynamicCacheName = 'd-stalsk-v11';
+const staticCacheName = 's-stalsk-v12';
+const dynamicCacheName = 'd-stalsk-v12';
 
 const staticAssets = [
     './',
@@ -11,7 +11,7 @@ const staticAssets = [
 self.addEventListener('install', async event => {
     const cache = await caches.open(staticCacheName);
     await cache.addAll(staticAssets);
-    console.log('Service worker has been installed');
+    console.log('Сервисный работник установлен');
 });
 
 self.addEventListener('activate', async event => {
@@ -19,15 +19,21 @@ self.addEventListener('activate', async event => {
     const checkKeys = cachesKeys.map(async key => {
         if (![staticCacheName, dynamicCacheName].includes(key)) {
             await caches.delete(key);
-            console.log(`Deleted cache: ${key}`);
+            console.log(`Удален кэш: ${key}`);
         }
     });
     await Promise.all(checkKeys);
-    console.log('Service worker has been activated');
+    
+    // Принудительное очищение кэша при активации
+    await caches.delete(staticCacheName);
+    await caches.delete(dynamicCacheName);
+    console.log('Старые кэши очищены');
+    
+    console.log('Сервисный работник активирован');
 });
 
 self.addEventListener('fetch', event => {
-    console.log(`Trying to fetch ${event.request.url}`);
+    console.log(`Попытка получить ${event.request.url}`);
     event.respondWith(checkCache(event.request));
 });
 
